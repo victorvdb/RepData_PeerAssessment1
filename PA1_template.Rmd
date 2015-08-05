@@ -25,7 +25,7 @@ head(activity)
 dim(activity)
 ```
 
-The date variable is now mutated to POSIXlt, as it is currently a factor variable. A year-month-date American style notation was used.
+The date variable is now mutated to POSIXct, as it is currently a factor variable. A year-month-date American style notation was used.
 
 ```{r}
 activity$date <- as.POSIXct(strptime(activity$date,"%Y-%m-%d"))
@@ -81,7 +81,7 @@ Plot the time series, using base plotting system and a line graph
 ```{r}
 plot(interval$interval, interval$average, 
         type="l",
-        main="Time series overview of steps taken per day on each 5 minute interval",
+        main="Overview of steps taken per day on each 5 minute interval",
         xlab="5 minute interval",
         ylab="Average number of steps taken")
 ```
