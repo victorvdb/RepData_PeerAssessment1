@@ -56,6 +56,19 @@ As a final step, required packages for other steps are loaded. There will be som
 ```r
 library(dplyr)
 ```
+
+```
+## 
+## Attaching package: 'dplyr'
+## 
+## The following objects are masked from 'package:stats':
+## 
+##     filter, lag
+## 
+## The following objects are masked from 'package:base':
+## 
+##     intersect, setdiff, setequal, union
+```
 ## What is mean total number of steps taken per day?
 
 In this section, the total number of steps taken each day is calculated. NAs are disregarded for this part. A histogram will be plotted with the total number of steps taken each day, and afterwards the mean and median of total number of steps will be reported.
@@ -216,7 +229,7 @@ The assignments for this section are:
 * Create a new factor variable in the dataset with two levels - "weekday" and "weekend" indicating whether a given date is a weekday or weekend day.
 * Make a panel plot containing a time series plot (i.e. type = "l") of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all weekday days or weekend days (y-axis). See the README file in the GitHub repository to see an example of what this plot should look like using simulated data.
 
-I use the original dataset again to answer this question. First, add in "weekend-day" or "week-day" as a new factor variable. I also set the locale to an English version as otherwise it will depend on the language of the system you use.
+I use the imputed dataset again to answer this question. First, add in "weekend-day" or "week-day" as a new factor variable. I also set the locale to an English version as otherwise it will depend on the language of the system you use.
 
 
 ```r
@@ -230,13 +243,13 @@ Sys.setlocale("LC_TIME","C")
 
 ```r
 ## Make the variable with the name spelled out
-activity$name.of.day <- weekdays(activity$date)
+imputed$name.of.day <- weekdays(imputed$date)
 
 ## create the base ind.weekday on the activity file and set it to 0 if it is a weekendday, and 1 if it is a weekday.
-activity$ind.weekday <- ifelse(activity$name.of.day == "Saturday" | activity$name.of.day =="Sunday", 0, 1)
+imputed$ind.weekday <- ifelse(imputed$name.of.day == "Saturday" | imputed$name.of.day =="Sunday", 0, 1)
 
 ## make it into an appropriate factor variable
-activity$ind.weekday <- factor(activity$ind.weekday, levels=c(0,1), labels=c("Weekend-day","Week-day"))
+imputed$ind.weekday <- factor(imputed$ind.weekday, levels=c(0,1), labels=c("Weekend-day","Week-day"))
 ```
 
 The factor variable is now there. I need to calculate the average steps per weekday/weekendday and per 5 minute interval, and then make a dual panel plot for it. I chose to use the same plot type as before, for consistency reasons.
@@ -244,9 +257,9 @@ The factor variable is now there. I need to calculate the average steps per week
 
 ```r
 ## Calculate the new average value
-new.interval <- activity %>% group_by(ind.weekday, interval) %>% summarize(average=mean(steps, na.rm=TRUE))
+new.interval <- imputed %>% group_by(ind.weekday, interval) %>% summarize(average=mean(steps, na.rm=TRUE))
 
-## Set plot to 1x2
+## Set plot proper size and containing 2 plots
 par(mfrow=c(2,1))
 
 ## plot weekenddays first.
@@ -254,6 +267,7 @@ weekend <- new.interval[new.interval$ind.weekday=="Weekend-day",]
 plot(weekend$interval, weekend$average, type="l",
         xlab="5 minute interval",
         ylab="Average number of steps taken",
+        ylim=c(0,225),
         main="Steps taken during weekend days")
 
 ## and now weekdays
@@ -261,6 +275,7 @@ week <- new.interval[new.interval$ind.weekday=="Week-day",]
 plot(week$interval, week$average, type="l",
         xlab="5 minute interval",
         ylab="Average number of steps taken",
+        ylim=c(0,225),
         main="Steps taken during week days")
 ```
 
